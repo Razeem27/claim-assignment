@@ -10,17 +10,31 @@ let formatExcel = json => {
 };
 export function JSONToEXcel(data, fileName) {
   let excelFileName = fileName + ".xlsx";
-  const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
-  const finalData = formatExcel(jsonWorkSheet);
-  jsonWorkSheet["!cols"] = finalData;
-  jsonWorkSheet["!rows"] = finalData;
-  const workBook = {
-    SheetNames: ["jsonWorkSheet"],
-    Sheets: {
-      jsonWorkSheet: jsonWorkSheet,
-    },
-  };
-  XLSX.writeFile(workBook, excelFileName);
+
+  // const fileName = 'output.xlsx';
+  const ws = XLSX.utils.json_to_sheet([data[0]]);
+  XLSX.utils.sheet_add_json(ws, [data[1]], { origin: "A6" });
+  // ws[!outline]="Exce"
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "output");
+  // XLSX.utils.book_append_sheet(wb, ws2, "output2");
+  XLSX.writeFile(wb, excelFileName);
+
+  // const jsonWorkSheet = XLSX.utils.json_to_sheet(data);
+
+  // const finalData = formatExcel(jsonWorkSheet);
+  // console.log("before", jsonWorkSheet);
+  // jsonWorkSheet["!cols"] = finalData;
+  // jsonWorkSheet["!rows"] = finalData;
+  // console.log("after", jsonWorkSheet);
+  // const workBook = {
+  //   SheetNames: ["jsonWorkSheet"],
+  //   Sheets: {
+  //     jsonWorkSheet: jsonWorkSheet,
+  //   },
+  // };
+  // XLSX.writeFile(workBook, excelFileName);
 }
 let excelToJSON = (fileData, callback) => {
   const files = fileData;

@@ -60,7 +60,7 @@
       <v-row>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >type of settlement*</span
+            >type of settlement <span style="color:red">*</span> </span
           >
           <v-select
             outlined
@@ -94,7 +94,7 @@
         </v-col>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >payment processing*</span
+            >payment processing <span style="color:red">*</span></span
           >
           <v-select
             outlined
@@ -128,7 +128,7 @@
         </v-col>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >transaction type*</span
+            >transaction type <span style="color:red">*</span></span
           >
           <v-select
             outlined
@@ -166,7 +166,7 @@
         </v-col>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >currency*</span
+            >currency <span style="color:red">*</span></span
           >
           <v-select
             outlined
@@ -183,7 +183,7 @@
         </v-col>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >exchange rate*</span
+            >exchange rate <span style="color:red">*</span></span
           >
           <v-text-field
             outlined
@@ -201,7 +201,7 @@
         </v-col>
         <v-col class="mr-1">
           <span class="caption font-weight-bold text-capitalize grey-text"
-            >agreed value%*</span
+            >agreed value%<span style="color:red">*</span></span
           >
           <v-text-field
             outlined
@@ -223,6 +223,7 @@
 </template>
 
 <script>
+import { convertNormalCase } from "@/store";
 import { mapGetters } from "vuex";
 import { JSONToEXcel, JSONTOPDF, PrintPdf } from "./helperFunctions";
 export default {
@@ -284,10 +285,11 @@ export default {
     ]),
     exportToExcel() {
       let tableData = this.getTableDataForExcel();
-      JSONToEXcel(
-        [this.formData, this.getTableDataForExcel],
-        "ClaimUserDetails"
-      );
+      let formDATA = Object.entries(this.formData);
+      formDATA = convertNormalCase(formDATA);
+      formDATA = Object.fromEntries(formDATA);
+
+      JSONToEXcel([formDATA, tableData], "ClaimUserDetails");
     },
     exportToPDF() {
       let newArray = Object.values(this.formData);
@@ -301,10 +303,12 @@ export default {
     },
     handlePrint() {
       let newArray = Object.values(this.formData);
-      console.log(newArray)
-      let tableData=this.getTableDataForPrint()
-      PrintPdf([this.columnsArray,tableData[1]], [[newArray],[tableData[0]]], "Claim Settlement");
-
+      let tableData = this.getTableDataForPrint();
+      PrintPdf(
+        [this.columnsArray, tableData[1]],
+        [[newArray], tableData[0]],
+        "Claim Settlement"
+      );
     },
   },
 };
